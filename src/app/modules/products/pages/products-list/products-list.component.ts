@@ -16,6 +16,14 @@ export class ProductsListComponent implements OnInit {
 
   constructor(private readonly productsService: ProductsService) {}
 
+  get totalProducts(): number {
+    return this.products.length;
+  }
+
+  get totalStock(): number {
+    return this.products.reduce((accumulator, product) => accumulator + product.stock, 0);
+  }
+
   ngOnInit(): void {
     this.loadProducts();
   }

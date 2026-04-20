@@ -1,29 +1,55 @@
-<mat-card class="entity-card entity-card--products">
-  <div class="entity-card__header">
+<mat-card class="app-surface overflow-hidden rounded-[32px] border-0 p-6 sm:p-8">
+  <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
     <div>
-      <p class="entity-card__eyebrow">Backoffice</p>
-      <h1>Productos</h1>
-      <p>Listado real desde <code>GET /v1/products</code> con acceso para usuarios autenticados.</p>
+      <p class="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-accent-600">Backoffice</p>
+      <h1 class="m-0 text-3xl font-extrabold text-slate-900">Productos</h1>
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500">Listado real desde <code class="rounded bg-slate-100 px-1.5 py-0.5">GET /v1/products</code> con acceso para usuarios autenticados.</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+        <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-400">Productos</p>
+        <p class="m-0 mt-1 text-2xl font-extrabold text-slate-900">{{ totalProducts }}</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
+        <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-400">Stock Total</p>
+        <p class="m-0 mt-1 text-2xl font-extrabold text-accent-600">{{ totalStock }}</p>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="entity-state">
-    <mat-spinner diameter="36"></mat-spinner>
+  <div *ngIf="isLoading" class="grid min-h-[220px] place-items-center">
+    <mat-spinner diameter="40"></mat-spinner>
   </div>
 
-  <p *ngIf="!isLoading && errorMessage" class="entity-state entity-state--error">{{ errorMessage }}</p>
+  <div *ngIf="!isLoading && errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm font-semibold text-rose-700">
+    {{ errorMessage }}
+  </div>
 
-  <div *ngIf="!isLoading && !errorMessage" class="entity-table entity-table--four">
-    <strong>Producto</strong>
-    <strong>Categoría</strong>
-    <strong>Precio</strong>
-    <strong>Stock</strong>
+  <div *ngIf="!isLoading && !errorMessage" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <article *ngFor="let product of products" class="rounded-[28px] border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl">
+      <div class="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <p class="mb-2 text-xs font-bold uppercase tracking-[0.22em] text-accent-600">{{ product.category }}</p>
+          <h2 class="m-0 text-xl font-extrabold text-slate-900">{{ product.name }}</h2>
+        </div>
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-accent-100 text-accent-600">
+          <mat-icon>inventory_2</mat-icon>
+        </span>
+      </div>
 
-    <ng-container *ngFor="let product of products">
-      <span>{{ product.name }}</span>
-      <span>{{ product.category }}</span>
-      <span>{{ formatPrice(product.price) }}</span>
-      <span>{{ product.stock }}</span>
-    </ng-container>
+      <p class="mb-5 min-h-[72px] text-sm leading-6 text-slate-500">{{ product.description }}</p>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-slate-50 px-4 py-3">
+          <p class="m-0 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Precio</p>
+          <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">{{ formatPrice(product.price) }}</p>
+        </div>
+        <div class="rounded-2xl bg-slate-50 px-4 py-3">
+          <p class="m-0 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Stock</p>
+          <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">{{ product.stock }}</p>
+        </div>
+      </div>
+    </article>
   </div>
 </mat-card>

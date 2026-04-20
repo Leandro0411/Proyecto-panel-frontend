@@ -1,27 +1,79 @@
-<div class="shell">
-  <mat-toolbar color="primary" class="shell__toolbar">
-    <span class="shell__brand">Admin Front</span>
-    <span class="shell__spacer"></span>
+<div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,.12),_transparent_25%),linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)]">
+  <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <mat-toolbar class="app-surface sticky top-4 z-20 mb-6 flex !h-auto items-center gap-4 rounded-[28px] px-4 py-4 sm:px-6">
+      <div class="flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-2xl bg-slate-900 text-white shadow-lg shadow-slate-900/20">
+          <mat-icon>shield</mat-icon>
+        </div>
+        <div>
+          <p class="m-0 text-xs font-bold uppercase tracking-[0.28em] text-slate-400">Panel Administrativo</p>
+          <h1 class="m-0 text-lg font-extrabold text-slate-900 sm:text-xl">Proyecto Pasantías e-Sueldos</h1>
+        </div>
+      </div>
 
-    <ng-container *ngIf="user$ | async as user">
-      <span class="shell__user">{{ user.name }} ({{ user.role }})</span>
-      <button mat-button type="button" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        Salir
-      </button>
-    </ng-container>
-  </mat-toolbar>
+      <span class="flex-1"></span>
 
-  <div class="shell__content">
-    <mat-card class="shell__nav">
-      <mat-nav-list>
-        <a mat-list-item routerLink="/users" routerLinkActive="active">Usuarios</a>
-        <a mat-list-item routerLink="/products" routerLinkActive="active">Productos</a>
-      </mat-nav-list>
-    </mat-card>
+      <ng-container *ngIf="user$ | async as user">
+        <div class="hidden rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-right md:block">
+          <p class="m-0 text-sm font-semibold text-slate-900">{{ user.name }}</p>
+          <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-500">{{ user.role }}</p>
+        </div>
 
-    <section class="shell__page">
-      <router-outlet></router-outlet>
-    </section>
+        <button mat-flat-button type="button" color="primary" class="!rounded-2xl !px-4" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          Salir
+        </button>
+      </ng-container>
+    </mat-toolbar>
+
+    <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+      <aside class="app-surface overflow-hidden rounded-[28px] p-4 sm:p-5">
+        <div class="mb-5 rounded-[24px] bg-slate-900 p-5 text-white">
+          <p class="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-slate-300">Workspace</p>
+          <h2 class="mb-2 text-xl font-extrabold">Gestión interna</h2>
+          <p class="m-0 text-sm text-slate-300">Navegación protegida con Angular Material, Tailwind y guards por rol.</p>
+        </div>
+
+        <mat-nav-list class="!p-0">
+          <a
+            mat-list-item
+            routerLink="/users"
+            routerLinkActive="bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+            class="mb-2 !rounded-2xl border border-slate-200 !px-4 !py-3 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                <mat-icon>group</mat-icon>
+              </span>
+              <div>
+                <span class="block text-sm font-bold">Usuarios</span>
+                <span class="block text-xs text-slate-400">Control de cuentas</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            mat-list-item
+            routerLink="/products"
+            routerLinkActive="bg-slate-900 text-white shadow-lg shadow-slate-900/10"
+            class="!rounded-2xl border border-slate-200 !px-4 !py-3 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-xl bg-accent-100 text-accent-600">
+                <mat-icon>inventory_2</mat-icon>
+              </span>
+              <div>
+                <span class="block text-sm font-bold">Productos</span>
+                <span class="block text-xs text-slate-400">Catálogo protegido</span>
+              </div>
+            </div>
+          </a>
+        </mat-nav-list>
+      </aside>
+
+      <section class="min-w-0">
+        <router-outlet></router-outlet>
+      </section>
+    </div>
   </div>
 </div>

@@ -16,6 +16,22 @@ export class UsersListComponent implements OnInit {
 
   constructor(private readonly usersService: UsersService) {}
 
+  get totalUsers(): number {
+    return this.users.length;
+  }
+
+  get totalAdmins(): number {
+    return this.users.filter((user) => user.role === 'admin').length;
+  }
+
+  roleBadgeClass(user: User): string {
+    return user.role === 'admin' ? 'bg-brand-50 text-brand-700' : 'bg-slate-100 text-slate-600';
+  }
+
+  verificationBadgeClass(user: User): string {
+    return user.isEmailVerified ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700';
+  }
+
   ngOnInit(): void {
     this.loadUsers();
   }

@@ -1,4 +1,70 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+}
+
+@layer components {
+  .app-surface {
+    @apply rounded-[28px] border border-white/70 bg-white/90 shadow-panel backdrop-blur;
+  }
+}
+
+.mat-mdc-card,
+.mat-card {
+  box-shadow: none !important;
+}
+
+.mat-toolbar.mat-primary {
+  --mat-toolbar-container-background-color: transparent;
+  --mat-toolbar-container-text-color: #0f172a;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  margin-top: 0.125rem;
+}
+
+.mdc-text-field--outlined {
+  border-radius: 18px !important;
+  background: rgba(248, 250, 252, 0.92) !important;
+}
+
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #2563eb !important;
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #0f172a;
+  --mdc-snackbar-supporting-text-color: #f8fafc;
+}
+
+.mat-mdc-progress-spinner circle,
+.mat-progress-spinner circle {
+  stroke: currentColor !important;
+}
