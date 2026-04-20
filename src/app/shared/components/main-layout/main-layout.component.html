@@ -28,9 +28,9 @@
 
     <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside class="app-surface overflow-hidden rounded-[28px] p-4 sm:p-5">
-
-        <mat-nav-list class="!p-0">
+        <mat-nav-list class="!p-0" *ngIf="user$ | async as user">
           <a
+            *ngIf="user.role === 'admin'"
             mat-list-item
             routerLink="/users"
             routerLinkActive="bg-brand-600 text-white shadow-lg shadow-brand-600/20"
@@ -51,7 +51,7 @@
             mat-list-item
             routerLink="/products"
             routerLinkActive="bg-brand-600 text-white shadow-lg shadow-brand-600/20"
-            class="!rounded-2xl border border-slate-200 !px-4 !py-3 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            class="mb-2 !rounded-2xl border border-slate-200 !px-4 !py-3 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
           >
             <div class="flex items-center gap-3">
               <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600">
@@ -60,6 +60,23 @@
               <div>
                 <span class="block text-sm font-bold">Productos</span>
                 <span class="block text-xs text-slate-400">Catálogo</span>
+              </div>
+            </div>
+          </a>
+
+          <a
+            mat-list-item
+            routerLink="/profile"
+            routerLinkActive="bg-brand-600 text-white shadow-lg shadow-brand-600/20"
+            class="!rounded-2xl border border-slate-200 !px-4 !py-3 text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <div class="flex items-center gap-3">
+              <span class="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600">
+                <mat-icon>badge</mat-icon>
+              </span>
+              <div>
+                <span class="block text-sm font-bold">Perfil</span>
+                <span class="block text-xs text-slate-400">Datos y contraseña</span>
               </div>
             </div>
           </a>

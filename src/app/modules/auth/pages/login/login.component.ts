@@ -39,8 +39,8 @@ export class LoginComponent {
       .login(this.loginForm.getRawValue())
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
-        next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/users';
+        next: (user) => {
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? (user.role === 'admin' ? '/users' : '/products');
           void this.router.navigateByUrl(returnUrl);
         },
         error: (error) => {

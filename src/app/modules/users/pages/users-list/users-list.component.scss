@@ -1,3 +1,59 @@
 :host {
   display: block;
 }
+
+table {
+  background: transparent;
+}
+
+th.mat-mdc-header-cell {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+td.mat-mdc-cell,
+th.mat-mdc-header-cell {
+  border-bottom-color: #e2e8f0;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.chip-base {
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.chip-admin {
+  background: #ffedd5 !important;
+  color: #c2410c !important;
+}
+
+.chip-user {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+.chip-verified {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+}
+
+.chip-pending {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+
+.action-button {
+  background: #eff6ff;
+  color: #165dff;
+}
+
+.action-button--danger {
+  background: #fee2e2;
+  color: #dc2626;
+}

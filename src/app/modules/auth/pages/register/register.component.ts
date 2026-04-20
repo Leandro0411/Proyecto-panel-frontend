@@ -46,7 +46,7 @@ export class RegisterComponent {
       .register(this.registerForm.getRawValue())
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
-        next: () => void this.router.navigate(['/users']),
+        next: (user) => void this.router.navigate([user.role === 'admin' ? '/users' : '/products']),
         error: (error) => {
           this.snackBar.open(error?.error?.message ?? 'No se pudo completar el registro.', 'Cerrar', {
             duration: 4000

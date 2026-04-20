@@ -1,0 +1,13 @@
+<div class="min-w-[320px] max-w-[420px] p-1">
+  <h2 class="m-0 text-2xl font-extrabold text-slate-900">{{ data.title }}</h2>
+  <p class="mt-4 text-sm leading-6 text-slate-500">{{ data.message }}</p>
+
+  <div class="mt-6 flex justify-end gap-3">
+    <button mat-stroked-button type="button" class="!rounded-xl" (click)="close(false)">
+      {{ data.cancelText ?? 'Cancelar' }}
+    </button>
+    <button mat-flat-button color="primary" type="button" class="!rounded-xl !bg-rose-600 !text-white" (click)="close(true)">
+      {{ data.confirmText ?? 'Confirmar' }}
+    </button>
+  </div>
+</div>

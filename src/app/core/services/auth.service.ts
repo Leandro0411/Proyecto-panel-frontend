@@ -86,6 +86,22 @@ export class AuthService {
     return this.currentUser$.pipe(map((user) => user?.role === role));
   }
 
+  updateCurrentUser(user: User): void {
+    const session = this.getStoredSession();
+
+    if (!session) {
+      return;
+    }
+
+    const updatedSession: SessionData = {
+      ...session,
+      user
+    };
+
+    localStorage.setItem(this.sessionStorageKey, JSON.stringify(updatedSession));
+    this.currentUserSubject.next(user);
+  }
+
   private setSession(response: AuthResponse): void {
     const session: SessionData = {
       user: response.user,

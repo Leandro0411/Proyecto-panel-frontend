@@ -18,7 +18,7 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'users'
+        redirectTo: 'products'
       },
       {
         path: 'users',
@@ -27,8 +27,11 @@ const routes: Routes = [
       },
       {
         path: 'products',
-        canActivate: [AdminGuard],
         loadChildren: () => import('./modules/products/products.module').then((m) => m.ProductsModule)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('./modules/profile/profile.module').then((m) => m.ProfileModule)
       }
     ]
   },
