@@ -1,0 +1,29 @@
+<mat-card class="entity-card">
+  <div class="entity-card__header">
+    <div>
+      <p class="entity-card__eyebrow">Gestión protegida</p>
+      <h1>Usuarios</h1>
+      <p>Listado real desde <code>GET /v1/users</code> con permisos de administrador.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="entity-state">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <p *ngIf="!isLoading && errorMessage" class="entity-state entity-state--error">{{ errorMessage }}</p>
+
+  <div *ngIf="!isLoading && !errorMessage" class="entity-table entity-table--four">
+    <strong>Nombre</strong>
+    <strong>Email</strong>
+    <strong>Rol</strong>
+    <strong>Verificado</strong>
+
+    <ng-container *ngFor="let user of users">
+      <span>{{ user.name }}</span>
+      <span>{{ user.email }}</span>
+      <span>{{ user.role }}</span>
+      <span>{{ user.isEmailVerified ? 'Sí' : 'No' }}</span>
+    </ng-container>
+  </div>
+</mat-card>

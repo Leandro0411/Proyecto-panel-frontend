@@ -1,0 +1,37 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <div class="auth-card__header">
+      <p class="auth-card__eyebrow">Acceso seguro</p>
+      <h1>Iniciar sesión</h1>
+      <p>Conectá el frontend con tu backend actual usando token Bearer y guards por rol.</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="submit()" class="auth-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        <mat-icon matSuffix>mail</mat-icon>
+        <mat-error *ngIf="hasError('email', 'required')">El email es obligatorio.</mat-error>
+        <mat-error *ngIf="hasError('email', 'email')">Ingresá un email válido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" />
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error *ngIf="hasError('password', 'required')">El password es obligatorio.</mat-error>
+        <mat-error *ngIf="hasError('password', 'minlength')">Mínimo 6 caracteres.</mat-error>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting">
+        <mat-spinner *ngIf="isSubmitting" diameter="18"></mat-spinner>
+        <span *ngIf="!isSubmitting">Ingresar</span>
+      </button>
+    </form>
+
+    <p class="auth-card__footer">
+      ¿Todavía no tenés cuenta?
+      <a routerLink="/auth/register">Registrate</a>
+    </p>
+  </mat-card>
+</div>

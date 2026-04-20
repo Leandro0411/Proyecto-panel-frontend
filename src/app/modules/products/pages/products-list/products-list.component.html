@@ -1,0 +1,29 @@
+<mat-card class="entity-card entity-card--products">
+  <div class="entity-card__header">
+    <div>
+      <p class="entity-card__eyebrow">Backoffice</p>
+      <h1>Productos</h1>
+      <p>Listado real desde <code>GET /v1/products</code> con acceso para usuarios autenticados.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="entity-state">
+    <mat-spinner diameter="36"></mat-spinner>
+  </div>
+
+  <p *ngIf="!isLoading && errorMessage" class="entity-state entity-state--error">{{ errorMessage }}</p>
+
+  <div *ngIf="!isLoading && !errorMessage" class="entity-table entity-table--four">
+    <strong>Producto</strong>
+    <strong>Categoría</strong>
+    <strong>Precio</strong>
+    <strong>Stock</strong>
+
+    <ng-container *ngFor="let product of products">
+      <span>{{ product.name }}</span>
+      <span>{{ product.category }}</span>
+      <span>{{ formatPrice(product.price) }}</span>
+      <span>{{ product.stock }}</span>
+    </ng-container>
+  </div>
+</mat-card>

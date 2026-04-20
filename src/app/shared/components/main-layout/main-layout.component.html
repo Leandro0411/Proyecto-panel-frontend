@@ -1,0 +1,27 @@
+<div class="shell">
+  <mat-toolbar color="primary" class="shell__toolbar">
+    <span class="shell__brand">Admin Front</span>
+    <span class="shell__spacer"></span>
+
+    <ng-container *ngIf="user$ | async as user">
+      <span class="shell__user">{{ user.name }} ({{ user.role }})</span>
+      <button mat-button type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Salir
+      </button>
+    </ng-container>
+  </mat-toolbar>
+
+  <div class="shell__content">
+    <mat-card class="shell__nav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/users" routerLinkActive="active">Usuarios</a>
+        <a mat-list-item routerLink="/products" routerLinkActive="active">Productos</a>
+      </mat-nav-list>
+    </mat-card>
+
+    <section class="shell__page">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+</div>
