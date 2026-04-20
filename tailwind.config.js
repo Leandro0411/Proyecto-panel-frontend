@@ -7,16 +7,16 @@ module.exports = {
         ink: '#0f172a',
         mist: '#eef4ff',
         brand: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#2563eb',
-          600: '#1d4ed8',
-          700: '#1e40af'
+          50: '#eef4ff',
+          100: '#dce8ff',
+          500: '#165dff',
+          600: '#1557e5',
+          700: '#124bcc'
         },
         accent: {
-          100: '#fff7ed',
-          500: '#f97316',
-          600: '#ea580c'
+          100: '#e9f1ff',
+          500: '#3b82f6',
+          600: '#2563eb'
         }
       },
       fontFamily: {
@@ -27,7 +27,7 @@ module.exports = {
       },
       backgroundImage: {
         'auth-grid':
-          'radial-gradient(circle at top left, rgba(37,99,235,.24), transparent 30%), radial-gradient(circle at bottom right, rgba(249,115,22,.18), transparent 25%)'
+          'radial-gradient(circle at top left, rgba(22,93,255,.28), transparent 30%), radial-gradient(circle at bottom right, rgba(59,130,246,.18), transparent 25%)'
       }
     }
   },

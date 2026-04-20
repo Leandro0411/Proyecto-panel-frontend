@@ -1,17 +1,14 @@
-<div class="min-h-screen bg-[radial-gradient(circle_at_bottom_right,rgba(249,115,22,.18),transparent_24%),linear-gradient(145deg,#09121f_0%,#183963_38%,#fff7ed_38%,#fffaf5_100%)] px-4 py-8">
-  <div class="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[.92fr_1.08fr]">
-    <mat-card class="app-surface order-2 w-full rounded-[32px] border-0 p-6 sm:p-8 lg:order-1">
-      <div class="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <p class="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-accent-600">Alta de usuarios</p>
-          <h2 class="m-0 text-3xl font-extrabold text-slate-900">Crear cuenta</h2>
-          <p class="mt-3 max-w-md text-sm leading-6 text-slate-500">
-            El registro ya está conectado a <code class="rounded bg-slate-100 px-1.5 py-0.5">POST /v1/auth/register</code>.
-          </p>
+<div class="min-h-screen bg-[radial-gradient(circle_at_bottom_right,rgba(59,130,246,.18),transparent_24%),linear-gradient(145deg,#07111f_0%,#1657c8_38%,#eef4ff_38%,#f7faff_100%)] px-4 py-8">
+  <div class="mx-auto grid min-h-[calc(100vh-4rem)] place-items-center">
+    <mat-card class="app-surface w-full max-w-lg rounded-[32px] border-0 p-6 sm:p-8">
+      <div class="mb-8 text-center">
+        <div class="mb-6 flex justify-center">
+          <div class="flex items-center justify-center rounded-[24px] bg-brand-600 px-5 py-4 shadow-lg shadow-brand-600/25">
+            <img src="assets/logo-esueldos.png" alt="e-Sueldos" class="h-10 w-auto object-contain" />
+          </div>
         </div>
-        <div class="grid h-14 w-14 place-items-center rounded-2xl bg-accent-600 text-white shadow-lg shadow-orange-500/20">
-          <mat-icon>person_add</mat-icon>
-        </div>
+
+        <h2 class="m-0 text-3xl font-extrabold text-slate-900">Crear cuenta</h2>
       </div>
 
       <form [formGroup]="registerForm" (ngSubmit)="submit()" class="space-y-4">
@@ -55,38 +52,17 @@
           color="primary"
           type="submit"
           [disabled]="isSubmitting"
-          class="!mt-3 !h-14 !w-full !rounded-2xl !bg-accent-600 !text-white"
+          class="!mt-3 !h-14 !w-full !rounded-2xl !bg-brand-600 !text-white"
         >
           <mat-spinner *ngIf="isSubmitting" diameter="18"></mat-spinner>
           <span *ngIf="!isSubmitting">Crear usuario</span>
         </button>
       </form>
 
-      <div class="mt-6 rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3 text-sm text-slate-600">
+      <div class="mt-6 rounded-2xl border border-brand-100 bg-brand-50 px-4 py-3 text-center text-sm text-slate-600">
         ¿Ya tenés cuenta?
-        <a routerLink="/auth/login" class="font-bold text-accent-600 no-underline hover:text-accent-600">Ingresá desde acá</a>
+        <a routerLink="/auth/login" class="font-bold text-brand-600 no-underline hover:text-brand-700">Ingresá desde acá</a>
       </div>
     </mat-card>
-
-    <section class="order-1 text-white lg:order-2">
-      <div class="mx-auto max-w-xl">
-        <p class="mb-4 text-sm font-bold uppercase tracking-[0.34em] text-orange-100">Onboarding</p>
-        <h1 class="mb-5 text-5xl font-extrabold leading-tight">Registro visual, validaciones reales y feedback inmediato desde la API.</h1>
-        <p class="mb-8 max-w-lg text-lg leading-8 text-slate-300">
-          El usuario completa el formulario, validamos coincidencia de contraseñas en el front y enviamos solo los campos que tu backend espera.
-        </p>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-[24px] border border-white/10 bg-white/10 p-5 backdrop-blur">
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-orange-100">Register</p>
-            <p class="m-0 text-sm text-slate-200">Envía <code class="rounded bg-white/10 px-1 py-0.5">name</code>, <code class="rounded bg-white/10 px-1 py-0.5">email</code> y <code class="rounded bg-white/10 px-1 py-0.5">password</code>.</p>
-          </div>
-          <div class="rounded-[24px] border border-white/10 bg-white/10 p-5 backdrop-blur">
-            <p class="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-brand-100">UX</p>
-            <p class="m-0 text-sm text-slate-200">Material maneja los campos y Tailwind mejora composición, ritmo y presencia visual.</p>
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 </div>
