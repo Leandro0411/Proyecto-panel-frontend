@@ -4,67 +4,64 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html,
-  body {
-    height: 100%;
-  }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-  body {
-    margin: 0;
-    font-family: 'Manrope', sans-serif;
-    background: #f8fafc;
-    color: #0f172a;
-  }
+.mdc-notched-outline__notch {
+  /* El notch es el "corte" del borde donde vive el label.
+     Sin este fix, max-width se calcula mal y corta el label. */
+  max-width: calc(100% - 24px) !important;
+ 
+  /* El borde derecho del notch debe ser transparente para que
+     el efecto visual del "corte" funcione correctamente */
+  border-right: none !important;
+ 
+  /* Damos padding extra para que el label tenga margen respecto al borde */
+  padding-right: 4px;
 }
-
-@layer components {
-  .app-surface {
-    @apply rounded-[28px] border border-white/70 bg-white/90 shadow-panel backdrop-blur;
-  }
-}
-
-.mat-mdc-card,
-.mat-card {
-  box-shadow: none !important;
-}
-
-.mat-toolbar.mat-primary {
-  --mat-toolbar-container-background-color: transparent;
-  --mat-toolbar-container-text-color: #0f172a;
-}
-
+ 
 .mat-mdc-form-field {
-  width: 100%;
+  /* El label flotante no debe ser recortado por overflow del contenedor */
+  .mdc-floating-label,
+  .mat-mdc-floating-label {
+    overflow: visible !important;
+    /* Importante: white-space nowrap evita que el label haga salto de línea
+       cuando está flotando (en escala 0.75) */
+    white-space: nowrap !important;
+  }
+ 
+  /* Fix específico para mat-select dentro de mat-form-field */
+  &.mat-mdc-form-field-type-mat-select {
+    .mdc-notched-outline__notch {
+      max-width: calc(100% - 24px) !important;
+      border-right: none !important;
+    }
+  }
 }
-
-.mat-mdc-form-field-subscript-wrapper {
-  margin-top: 0.125rem;
-}
-
+ 
+/* Fix para el label cuando está en estado "flotando" (tiene valor o foco) */
 .mdc-text-field--outlined {
-  border-radius: 18px !important;
-  background: rgba(248, 250, 252, 0.92) !important;
+  .mdc-floating-label--float-above {
+    /* La transformación de flotar no debe recortar el texto */
+    overflow: visible !important;
+  }
 }
-
-.mdc-notched-outline__leading,
-.mdc-notched-outline__notch,
-.mdc-notched-outline__trailing {
-  border-color: rgba(148, 163, 184, 0.45) !important;
+ 
+.mat-form-field-appearance-outline {
+  /* El gap del borde superior debe ser transparente cuando el label flota */
+  .mat-form-field-outline-gap {
+    border-top-color: transparent !important;
+  }
+ 
+  /* Cuando el campo tiene valor o está en foco (label flotando) */
+  &.mat-form-field-should-float {
+    .mat-form-field-label {
+      width: 133.33333% !important;
+      overflow: visible !important;
+    }
+  }
 }
-
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
-  border-color: #165dff !important;
-}
-
-.mat-mdc-snack-bar-container {
-  --mdc-snackbar-container-color: #0f172a;
-  --mdc-snackbar-supporting-text-color: #f8fafc;
-}
-
-.mat-mdc-progress-spinner circle,
-.mat-progress-spinner circle {
-  stroke: currentColor !important;
+ 
+.mat-mdc-form-field-infix {
+  width: 100%;
 }
