@@ -8,25 +8,17 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mdc-notched-outline__notch {
-  /* El notch es el "corte" del borde donde vive el label.
-     Sin este fix, max-width se calcula mal y corta el label. */
   max-width: calc(100% - 24px) !important;
- 
-  /* El borde derecho del notch debe ser transparente para que
-     el efecto visual del "corte" funcione correctamente */
+
   border-right: none !important;
  
-  /* Damos padding extra para que el label tenga margen respecto al borde */
   padding-right: 4px;
 }
  
 .mat-mdc-form-field {
-  /* El label flotante no debe ser recortado por overflow del contenedor */
   .mdc-floating-label,
   .mat-mdc-floating-label {
     overflow: visible !important;
-    /* Importante: white-space nowrap evita que el label haga salto de línea
-       cuando está flotando (en escala 0.75) */
     white-space: nowrap !important;
   }
  
@@ -42,18 +34,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* Fix para el label cuando está en estado "flotando" (tiene valor o foco) */
 .mdc-text-field--outlined {
   .mdc-floating-label--float-above {
-    /* La transformación de flotar no debe recortar el texto */
     overflow: visible !important;
   }
 }
  
 .mat-form-field-appearance-outline {
-  /* El gap del borde superior debe ser transparente cuando el label flota */
   .mat-form-field-outline-gap {
     border-top-color: transparent !important;
   }
- 
-  /* Cuando el campo tiene valor o está en foco (label flotando) */
+
   &.mat-form-field-should-float {
     .mat-form-field-label {
       width: 133.33333% !important;

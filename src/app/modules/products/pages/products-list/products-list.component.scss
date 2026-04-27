@@ -1,3 +1,13 @@
 :host {
   display: block;
 }
+
+.action-button {
+  background: #eff6ff;
+  color: #165dff;
+}
+
+.action-button--danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
