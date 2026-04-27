@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
+import { PRODUCT_CATEGORIES, ProductCategory } from '../../../../core/constants/product.constants';
 import { CreateProductPayload, UpdateProductPayload } from '../../../../core/models/product-admin.model';
 import { Product } from '../../../../core/models/product.model';
 
@@ -22,13 +23,15 @@ export interface ProductFormDialogResult {
 })
 export class ProductFormDialogComponent {
   readonly isEditMode = this.data.mode === 'edit';
+  readonly categories = PRODUCT_CATEGORIES;
 
   readonly form = this.formBuilder.nonNullable.group({
     name: [this.data.product?.name ?? '', [Validators.required, Validators.minLength(3)]],
     description: [this.data.product?.description ?? '', [Validators.required, Validators.minLength(10)]],
-    category: [this.data.product?.category ?? '', [Validators.required, Validators.minLength(2)]],
+    category: [this.data.product?.category ?? 'indumentaria', [Validators.required]],
     price: [this.data.product?.price ?? 0, [Validators.required, Validators.min(0)]],
-    stock: [this.data.product?.stock ?? 0, [Validators.required, Validators.min(0)]]
+    stock: [this.data.product?.stock ?? 0, [Validators.required, Validators.min(0)]],
+    imageUrl: [this.data.product?.imageUrl ?? '', [Validators.pattern(/^https?:\/\/.+/i)]]
   });
 
   constructor(
@@ -45,9 +48,13 @@ export class ProductFormDialogComponent {
     return this.isEditMode ? 'Guardar cambios' : 'Crear producto';
   }
 
-  hasError(controlName: 'name' | 'description' | 'category' | 'price' | 'stock', errorName: string): boolean {
+  hasError(controlName: 'name' | 'description' | 'category' | 'price' | 'stock' | 'imageUrl', errorName: string): boolean {
     const control = this.form.get(controlName);
     return !!control?.touched && !!control.errors?.[errorName];
+  }
+
+  get imagePreview(): string {
+    return this.form.controls.imageUrl.value.trim();
   }
 
   close(): void {
@@ -64,9 +71,10 @@ export class ProductFormDialogComponent {
     const payload = {
       name: rawValue.name.trim(),
       description: rawValue.description.trim(),
-      category: rawValue.category.trim(),
+      category: rawValue.category as ProductCategory,
       price: Number(rawValue.price),
-      stock: Number(rawValue.stock)
+      stock: Number(rawValue.stock),
+      imageUrl: rawValue.imageUrl.trim()
     };
 
     this.dialogRef.close({

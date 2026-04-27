@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(22,93,255,.16),_transparent_25%),linear-gradient(180deg,#f7faff_0%,#eaf1ff_100%)]">
+<div class="dashboard-shell min-h-screen bg-[radial-gradient(circle_at_top,_rgba(22,93,255,.16),_transparent_25%),linear-gradient(180deg,#f7faff_0%,#eaf1ff_100%)]">
   <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <mat-toolbar class="app-surface sticky top-4 z-20 mb-6 flex !h-auto items-center gap-4 rounded-[28px] px-4 py-4 sm:px-6">
       <div class="flex items-center gap-3">
@@ -14,6 +14,13 @@
       <span class="flex-1"></span>
 
       <ng-container *ngIf="user$ | async as user">
+        <div class="hidden items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 lg:flex">
+          <mat-icon class="text-slate-500">{{ (theme$ | async) === 'dark' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+          <mat-slide-toggle [checked]="(theme$ | async) === 'dark'" (change)="toggleTheme()" color="primary">
+            {{ (theme$ | async) === 'dark' ? 'Modo noche' : 'Modo día' }}
+          </mat-slide-toggle>
+        </div>
+
         <div class="hidden rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-right md:block">
           <p class="m-0 text-sm font-semibold text-slate-900">{{ user.name }}</p>
           <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-500">{{ user.role }}</p>
@@ -29,6 +36,14 @@
     <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside class="app-surface overflow-hidden rounded-[28px] p-4 sm:p-5">
         <mat-nav-list class="!p-0" *ngIf="user$ | async as user">
+          <div class="mb-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 lg:hidden">
+            <div>
+              <p class="m-0 text-xs uppercase tracking-[0.18em] text-slate-400">Tema</p>
+              <p class="m-0 mt-1 text-sm font-semibold text-slate-900">{{ (theme$ | async) === 'dark' ? 'Modo noche' : 'Modo día' }}</p>
+            </div>
+            <mat-slide-toggle [checked]="(theme$ | async) === 'dark'" (change)="toggleTheme()" color="primary"></mat-slide-toggle>
+          </div>
+
           <a
             *ngIf="user.role === 'admin'"
             mat-list-item

@@ -5,6 +5,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Sort, SortDirection } from '@angular/material/sort';
 import { finalize } from 'rxjs';
 
+import { PRODUCT_CATEGORIES, ProductCategory } from '../../../../core/constants/product.constants';
 import { PaginatedResponse } from '../../../../core/models/api-response.model';
 import { CreateProductPayload, ProductQueryParams, UpdateProductPayload } from '../../../../core/models/product-admin.model';
 import { Product } from '../../../../core/models/product.model';
@@ -19,8 +20,9 @@ import { ProductFormDialogComponent, ProductFormDialogResult } from '../../compo
   styleUrls: ['./products-list.component.scss']
 })
 export class ProductsListComponent implements OnInit {
-  readonly categoryOptions: Array<{ value: string; label: string }> = [
-    { value: '', label: 'Todas las categorías' }
+  readonly categoryOptions: Array<{ value: '' | ProductCategory; label: string }> = [
+    { value: '', label: 'Todas las categorías' },
+    ...PRODUCT_CATEGORIES
   ];
 
   isInitialLoading = true;
@@ -31,7 +33,7 @@ export class ProductsListComponent implements OnInit {
   pageSize = 9;
   pageIndex = 0;
   nameFilter = '';
-  categoryFilter = '';
+  categoryFilter: '' | ProductCategory = '';
   sortActive = 'name';
   sortDirection: SortDirection = 'asc';
 
@@ -66,13 +68,17 @@ export class ProductsListComponent implements OnInit {
     }).format(price);
   }
 
+  formatCategory(category: ProductCategory): string {
+    return PRODUCT_CATEGORIES.find((item) => item.value === category)?.label ?? category;
+  }
+
   onNameFilterChange(value: string): void {
     this.nameFilter = value.trim();
     this.pageIndex = 0;
     this.loadProducts();
   }
 
-  onCategoryFilterChange(value: string): void {
+  onCategoryFilterChange(value: '' | ProductCategory): void {
     this.categoryFilter = value;
     this.pageIndex = 0;
     this.loadProducts();
@@ -190,7 +196,6 @@ export class ProductsListComponent implements OnInit {
           this.totalResults = response.totalResults;
           this.pageIndex = response.page - 1;
           this.pageSize = response.limit;
-          this.updateCategoryOptions(response.results);
         },
         error: (error) => {
           this.errorMessage = error?.error?.message ?? 'No se pudieron cargar los productos.';
@@ -208,16 +213,4 @@ export class ProductsListComponent implements OnInit {
     };
   }
 
-  private updateCategoryOptions(products: Product[]): void {
-    const categories = Array.from(new Set(products.map((product) => product.category.trim()).filter(Boolean))).sort((a, b) =>
-      a.localeCompare(b, 'es')
-    );
-
-    this.categoryOptions.splice(
-      0,
-      this.categoryOptions.length,
-      { value: '', label: 'Todas las categorías' },
-      ...categories.map((category) => ({ value: category, label: category }))
-    );
-  }
 }

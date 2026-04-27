@@ -2,6 +2,17 @@
   display: block;
 }
 
+.product-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.price-value {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .action-button {
   background: #eff6ff;
   color: #165dff;
