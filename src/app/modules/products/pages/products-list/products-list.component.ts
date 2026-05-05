@@ -7,9 +7,11 @@ import { finalize } from 'rxjs';
 
 import { PRODUCT_CATEGORIES, ProductCategory } from '../../../../core/constants/product.constants';
 import { PaginatedResponse } from '../../../../core/models/api-response.model';
+import { CartItem } from '../../../../core/models/cart.model';
 import { CreateProductPayload, ProductQueryParams, UpdateProductPayload } from '../../../../core/models/product-admin.model';
 import { Product } from '../../../../core/models/product.model';
 import { AuthService } from '../../../../core/services/auth.service';
+import { CartService } from '../../../../core/services/cart.service';
 import { ProductsService } from '../../../../core/services/products.service';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ProductFormDialogComponent, ProductFormDialogResult } from '../../components/product-form-dialog/product-form-dialog.component';
@@ -29,6 +31,7 @@ export class ProductsListComponent implements OnInit {
   isGridLoading = false;
   errorMessage = '';
   products: Product[] = [];
+  cartItems: CartItem[] = [];
   totalResults = 0;
   pageSize = 9;
   pageIndex = 0;
@@ -40,12 +43,21 @@ export class ProductsListComponent implements OnInit {
   constructor(
     private readonly productsService: ProductsService,
     private readonly authService: AuthService,
+    private readonly cartService: CartService,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.cartService.cartItems$.subscribe((items) => {
+      this.cartItems = [...items].sort((left, right) => left.product.name.localeCompare(right.product.name));
+    });
+  }
 
   get totalProducts(): number {
     return this.totalResults;
+  }
+
+  get cartItemsCount(): number {
+    return this.cartItems.reduce((accumulator, item) => accumulator + item.quantity, 0);
   }
 
   get totalStock(): number {
@@ -56,6 +68,10 @@ export class ProductsListComponent implements OnInit {
     return this.authService.isAdmin();
   }
 
+  get isUserView(): boolean {
+    return !this.isAdmin;
+  }
+
   ngOnInit(): void {
     this.loadProducts(true);
   }
@@ -64,7 +80,8 @@ export class ProductsListComponent implements OnInit {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(price);
   }
 
@@ -94,6 +111,27 @@ export class ProductsListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadProducts();
+  }
+
+  addToCart(product: Product): void {
+    if (product.stock <= 0) {
+      return;
+    }
+
+    this.cartService.addProduct(product);
+    this.snackBar.open(`"${product.name}" se agregó a tu reserva.`, 'Cerrar', { duration: 2600 });
+  }
+
+  getCartQuantity(product: Product): number {
+    return this.cartService.getQuantity(product.id);
+  }
+
+  isInCart(product: Product): boolean {
+    return this.getCartQuantity(product) > 0;
+  }
+
+  trackByProductId(_: number, product: Product): string {
+    return product.id;
   }
 
   openCreateDialog(): void {
@@ -193,6 +231,7 @@ export class ProductsListComponent implements OnInit {
       .subscribe({
         next: (response: PaginatedResponse<Product>) => {
           this.products = response.results;
+          this.cartService.syncProducts(this.products);
           this.totalResults = response.totalResults;
           this.pageIndex = response.page - 1;
           this.pageSize = response.limit;
@@ -212,5 +251,4 @@ export class ProductsListComponent implements OnInit {
       sortBy: `${this.sortActive}:${this.sortDirection || 'asc'}`
     };
   }
-
 }

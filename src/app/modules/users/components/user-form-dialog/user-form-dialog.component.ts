@@ -36,7 +36,6 @@ export class UserFormDialogComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: UserFormDialogData
   ) {
     if (this.isEditMode) {
-      this.form.controls.role.disable();
       this.form.controls.password.addValidators([Validators.minLength(8), Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)]);
       this.form.controls.password.updateValueAndValidity();
     }
@@ -71,6 +70,7 @@ export class UserFormDialogComponent {
       const payload: UpdateUserPayload = {
         name: rawValue.name,
         email: rawValue.email,
+        role: rawValue.role,
         ...(rawValue.password ? { password: rawValue.password } : {})
       };
 

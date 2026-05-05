@@ -1,8 +1,15 @@
 <mat-card class="app-surface overflow-hidden rounded-[32px] border-0 p-6 sm:p-8">
   <div class="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
     <div>
-      <p class="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-brand-600">Catálogo</p>
-      <h1 class="m-0 text-3xl font-extrabold text-slate-900">Productos</h1>
+      <p class="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-brand-600">
+        {{ isAdmin ? 'Catálogo' : 'Tienda interna' }}
+      </p>
+      <h1 class="m-0 text-3xl font-extrabold text-slate-900">
+        {{ isAdmin ? 'Productos' : 'Productos disponibles' }}
+      </h1>
+      <p *ngIf="isUserView" class="m-0 mt-3 max-w-2xl text-sm leading-6 text-slate-500">
+        Explorá el catálogo y agregá productos a tu carrito. Después podés revisar todo desde la vista de reservas.
+      </p>
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -13,6 +20,10 @@
       <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-center">
         <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-400">Stock visible</p>
         <p class="m-0 mt-1 text-2xl font-extrabold text-brand-600">{{ totalStock }}</p>
+      </div>
+      <div *ngIf="isUserView" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center">
+        <p class="m-0 text-xs uppercase tracking-[0.22em] text-emerald-700">En carrito</p>
+        <p class="m-0 mt-1 text-2xl font-extrabold text-emerald-700">{{ cartItemsCount }}</p>
       </div>
       <button
         *ngIf="isAdmin"
@@ -53,16 +64,14 @@
   <div *ngIf="!isInitialLoading && !errorMessage" class="space-y-6">
     <div class="relative">
       <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <article *ngFor="let product of products" class="product-card rounded-[28px] border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl">
+        <article
+          *ngFor="let product of products; trackBy: trackByProductId"
+          class="product-card rounded-[28px] border border-slate-200 bg-white p-4 transition hover:-translate-y-1 hover:shadow-xl sm:p-5"
+        >
           <div class="mb-4 overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100">
-            <img
-              *ngIf="product.imageUrl; else productFallbackImage"
-              [src]="product.imageUrl"
-              [alt]="product.name"
-              class="h-52 w-full object-cover"
-            />
+            <img *ngIf="product.imageUrl; else productFallbackImage" [src]="product.imageUrl" [alt]="product.name" class="aspect-square w-full object-cover" />
             <ng-template #productFallbackImage>
-              <div class="grid h-52 place-items-center bg-[linear-gradient(135deg,#dbeafe_0%,#eff6ff_100%)] text-brand-600">
+              <div class="grid aspect-square w-full place-items-center bg-[linear-gradient(135deg,#dbeafe_0%,#eff6ff_100%)] text-brand-600">
                 <div class="text-center">
                   <mat-icon class="!h-12 !w-12 !text-5xl">inventory_2</mat-icon>
                   <p class="m-0 mt-3 text-sm font-bold uppercase tracking-[0.18em]">Sin foto</p>
@@ -77,12 +86,12 @@
               <h2 class="m-0 break-words text-xl font-extrabold text-slate-900">{{ product.name }}</h2>
             </div>
             <div *ngIf="isAdmin" class="flex shrink-0 flex-col gap-2">
-                <button mat-icon-button type="button" class="action-button" (click)="openEditDialog(product)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button type="button" class="action-button action-button--danger" (click)="confirmDelete(product)">
-                  <mat-icon>delete</mat-icon>
-                </button>
+              <button mat-icon-button type="button" class="action-button" (click)="openEditDialog(product)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button type="button" class="action-button action-button--danger" (click)="confirmDelete(product)">
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </div>
 
@@ -91,28 +100,45 @@
           <div class="grid grid-cols-3 gap-3">
             <div class="col-span-2 rounded-2xl bg-slate-50 px-4 py-3">
               <p class="m-0 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Precio</p>
-              <p class="price-value m-0 mt-1 text-lg font-extrabold text-slate-900 whitespace-nowrap">
-                {{ formatPrice(product.price) }}
-              </p>
+              <p class="price-value m-0 mt-1 whitespace-nowrap text-lg font-extrabold text-slate-900">{{ formatPrice(product.price) }}</p>
             </div>
 
             <div class="col-span-1 rounded-2xl bg-slate-50 px-4 py-3">
               <p class="m-0 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Stock</p>
-              <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">
-                {{ product.stock }}
+              <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">{{ product.stock }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="isUserView" class="mt-4 flex items-center justify-between gap-3 rounded-[24px] bg-slate-50 px-4 py-4">
+            <div>
+              <p class="m-0 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Reserva</p>
+              <p class="m-0 mt-1 text-sm font-semibold text-slate-900">
+                {{ isInCart(product) ? getCartQuantity(product) + ' unidad(es) en tu carrito' : (product.stock > 0 ? 'Disponible para reservar' : 'Sin stock disponible') }}
               </p>
             </div>
+
+            <button
+              mat-flat-button
+              color="primary"
+              class="!h-11 !rounded-2xl !bg-brand-600 !px-4 !text-white"
+              [disabled]="product.stock <= 0"
+              (click)="addToCart(product)"
+            >
+              <mat-icon>{{ isInCart(product) ? 'add_circle' : 'add_shopping_cart' }}</mat-icon>
+              {{ isInCart(product) ? 'Sumar' : 'Agregar' }}
+            </button>
           </div>
         </article>
 
         <div
           *ngIf="!products.length"
-          class="md:col-span-2 xl:col-span-3 rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center"
+          class="rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center"
+          [ngClass]="isAdmin ? 'md:col-span-2 xl:col-span-3' : 'md:col-span-2 xl:col-span-3'"
         >
           <mat-icon class="!h-12 !w-12 !text-5xl text-slate-300">inventory</mat-icon>
           <h2 class="mt-4 text-xl font-extrabold text-slate-900">No encontramos productos</h2>
           <p class="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-500">
-            Probá ajustando los filtros o, si sos admin, creando un nuevo producto desde esta pantalla.
+            {{ isAdmin ? 'Probá ajustando los filtros o creando un nuevo producto desde esta pantalla.' : 'Probá ajustando los filtros para encontrar lo que buscás.' }}
           </p>
         </div>
       </div>

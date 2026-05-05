@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.cart-panel {
+  background:
+    radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f8fffc 100%);
+}
+
+.cart-thumb {
+  height: 68px;
+  width: 68px;
+  flex-shrink: 0;
+}
+
+.quantity-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 1rem;
+  background: #ffffff;
+  padding: 0.2rem;
+}
+
+.quantity-stepper input {
+  width: 58px;
+  border: 0;
+  background: transparent;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+}
+
+.quantity-stepper input::-webkit-outer-spin-button,
+.quantity-stepper input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.quantity-stepper--compact input {
+  width: 46px;
+}
