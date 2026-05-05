@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.chart-shell {
+  background-image: radial-gradient(circle at top, rgba(22, 93, 255, 0.08), transparent 45%);
+}
+
+.chart-grid {
+  stroke: #cbd5e1;
+  stroke-dasharray: 6 8;
+  stroke-width: 1.5;
+}
+
+.chart-line {
+  fill: none;
+  stroke: #165dff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chart-point {
+  fill: #10b981;
+  stroke: #ffffff;
+  stroke-width: 3;
+}
+
+.category-bar {
+  background: linear-gradient(90deg, #10b981 0%, #165dff 100%);
+}

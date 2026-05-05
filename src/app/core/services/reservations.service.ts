@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/api-response.model';
-import { CreateReservationPayload, Reservation } from '../models/reservation.model';
+import { AdminReservationOverview, CreateReservationPayload, Reservation } from '../models/reservation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,5 +19,10 @@ export class ReservationsService {
   getMyReservations(page = 1, limit = 5): Observable<PaginatedResponse<Reservation>> {
     const params = new HttpParams().set('page', page).set('limit', limit).set('sortBy', 'createdAt:desc');
     return this.http.get<PaginatedResponse<Reservation>>(`${environment.apiUrl}/reservations/my`, { params });
+  }
+
+  getAdminOverview(page = 1, limit = 6): Observable<AdminReservationOverview> {
+    const params = new HttpParams().set('page', page).set('limit', limit).set('sortBy', 'createdAt:desc');
+    return this.http.get<AdminReservationOverview>(`${environment.apiUrl}/reservations/admin/overview`, { params });
   }
 }

@@ -1,0 +1,196 @@
+<mat-card class="app-surface overflow-hidden rounded-[32px] border-0 p-6 sm:p-8">
+  <div class="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div>
+      <p class="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-emerald-700">Administración</p>
+      <h1 class="m-0 text-3xl font-extrabold text-slate-900">Panel de ventas</h1>
+      <p class="m-0 mt-3 max-w-3xl text-sm leading-6 text-slate-500">
+        Vista global de todas las reservas confirmadas, con métricas de ingresos, tendencia mensual y detalle de cada venta.
+      </p>
+    </div>
+
+    <div class="rounded-[28px] bg-slate-900 px-5 py-4 text-white shadow-xl shadow-slate-900/10">
+      <p class="m-0 text-xs uppercase tracking-[0.22em] text-slate-300">Ingreso acumulado</p>
+      <p class="m-0 mt-2 text-3xl font-extrabold">{{ formatPrice(totalRevenue) }}</p>
+      <p class="m-0 mt-1 text-xs uppercase tracking-[0.18em] text-emerald-300">{{ totalReservations }} ventas confirmadas</p>
+    </div>
+  </div>
+
+  <div *ngIf="isInitialLoading" class="space-y-4">
+    <div class="h-28 animate-pulse rounded-[28px] bg-slate-100"></div>
+    <div class="h-80 animate-pulse rounded-[28px] bg-slate-100"></div>
+    <div class="h-64 animate-pulse rounded-[28px] bg-slate-100"></div>
+  </div>
+
+  <div *ngIf="!isInitialLoading && errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm font-semibold text-rose-700">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isInitialLoading && !errorMessage && overview" class="space-y-6">
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <article class="rounded-[28px] border border-emerald-200 bg-emerald-50 p-5">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Dinero ganado</p>
+        <p class="m-0 mt-3 text-3xl font-extrabold text-emerald-800">{{ formatPrice(totalRevenue) }}</p>
+        <p class="m-0 mt-2 text-sm text-emerald-700">Suma de todas las ventas registradas.</p>
+      </article>
+
+      <article class="rounded-[28px] border border-slate-200 bg-slate-50 p-5">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Ventas totales</p>
+        <p class="m-0 mt-3 text-3xl font-extrabold text-slate-900">{{ totalReservations }}</p>
+        <p class="m-0 mt-2 text-sm text-slate-500">Reservas confirmadas por usuarios.</p>
+      </article>
+
+      <article class="rounded-[28px] border border-sky-200 bg-sky-50 p-5">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Productos vendidos</p>
+        <p class="m-0 mt-3 text-3xl font-extrabold text-sky-900">{{ totalItemsSold }}</p>
+        <p class="m-0 mt-2 text-sm text-sky-700">Unidades descontadas del stock.</p>
+      </article>
+
+      <article class="rounded-[28px] border border-amber-200 bg-amber-50 p-5">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.2em] text-amber-700">Gasto promedio</p>
+        <p class="m-0 mt-3 text-3xl font-extrabold text-amber-900">{{ formatPrice(averageTicket) }}</p>
+        <p class="m-0 mt-2 text-sm text-amber-700">Promedio por venta confirmada.</p>
+      </article>
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.85fr)]">
+      <article class="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="m-0 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">Tendencia</p>
+            <h2 class="m-0 mt-2 text-2xl font-extrabold text-slate-900">Ventas por mes</h2>
+            <p class="m-0 mt-2 text-sm text-slate-500">Ingresos de los últimos 12 meses sobre todas las reservas confirmadas.</p>
+          </div>
+          <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+            <mat-icon>show_chart</mat-icon>
+          </span>
+        </div>
+
+        <div class="chart-shell mt-6 rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+          <svg [attr.viewBox]="'0 0 ' + chartWidth + ' ' + chartHeight" class="h-72 w-full" preserveAspectRatio="none">
+            <line x1="24" y1="24" [attr.x2]="chartWidth - 24" y2="24" class="chart-grid"></line>
+            <line x1="24" y1="130" [attr.x2]="chartWidth - 24" y2="130" class="chart-grid"></line>
+            <line x1="24" [attr.y1]="chartHeight - 24" [attr.x2]="chartWidth - 24" [attr.y2]="chartHeight - 24" class="chart-grid"></line>
+
+            <polyline *ngIf="chartPolyline" [attr.points]="chartPolyline" class="chart-line"></polyline>
+
+            <ng-container *ngFor="let point of chartPoints">
+              <circle [attr.cx]="point.x" [attr.cy]="point.y" r="4.5" class="chart-point"></circle>
+            </ng-container>
+          </svg>
+
+          <div class="mt-4 grid grid-cols-3 gap-3 text-xs text-slate-500 sm:grid-cols-6 xl:grid-cols-12">
+            <div *ngFor="let item of monthlySales; trackBy: trackByMonth" class="rounded-2xl bg-white px-3 py-2 text-center">
+              <p class="m-0 font-bold uppercase tracking-[0.12em] text-slate-400">{{ formatMonthLabel(item.month) }}</p>
+              <p class="m-0 mt-1 text-sm font-extrabold text-slate-900">{{ formatPrice(item.revenue) }}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="m-0 text-xs font-bold uppercase tracking-[0.22em] text-emerald-700">Categorías</p>
+            <h2 class="m-0 mt-2 text-2xl font-extrabold text-slate-900">Mayor ganancia</h2>
+            <p class="m-0 mt-2 text-sm text-slate-500">Distribución de ingresos por categoría de producto.</p>
+          </div>
+          <span class="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
+            <mat-icon>pie_chart</mat-icon>
+          </span>
+        </div>
+
+        <div *ngIf="categoryBreakdown.length; else emptyCategoryState" class="mt-6 space-y-4">
+          <article *ngFor="let item of categoryBreakdown; trackBy: trackByCategory" class="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="m-0 text-sm font-extrabold text-slate-900">{{ formatCategory(item.category) }}</p>
+                <p class="m-0 mt-1 text-xs uppercase tracking-[0.15em] text-slate-400">{{ item.itemsSold }} unidades vendidas</p>
+              </div>
+              <p class="m-0 text-sm font-extrabold text-slate-900">{{ formatPrice(item.revenue) }}</p>
+            </div>
+
+            <div class="mt-3 h-3 overflow-hidden rounded-full bg-slate-200">
+              <div class="category-bar h-full rounded-full" [style.width]="categoryBarWidth(item)"></div>
+            </div>
+          </article>
+        </div>
+
+        <ng-template #emptyCategoryState>
+          <div class="mt-6 rounded-[24px] border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center">
+            <mat-icon class="!h-10 !w-10 !text-4xl text-slate-300">inventory</mat-icon>
+            <h3 class="m-0 mt-3 text-lg font-extrabold text-slate-900">Sin datos todavía</h3>
+            <p class="m-0 mt-2 text-sm leading-6 text-slate-500">Las categorías aparecerán cuando existan ventas confirmadas.</p>
+          </div>
+        </ng-template>
+      </article>
+    </section>
+
+    <section class="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="m-0 text-xs font-bold uppercase tracking-[0.22em] text-brand-600">Detalle</p>
+          <h2 class="m-0 mt-2 text-2xl font-extrabold text-slate-900">Todas las ventas</h2>
+          <p class="m-0 mt-2 text-sm text-slate-500">Listado paginado de reservas confirmadas con comprador, fecha, monto y productos incluidos.</p>
+        </div>
+        <mat-spinner *ngIf="isPanelLoading" diameter="28"></mat-spinner>
+      </div>
+
+      <div *ngIf="recentReservations.length; else emptySalesState" class="mt-6 space-y-4">
+        <article *ngFor="let reservation of recentReservations; trackBy: trackByReservationId" class="rounded-[24px] border border-slate-200 bg-slate-50 p-4">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">
+                  Venta confirmada
+                </span>
+                <span class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  {{ formatFullDate(reservation.createdAt) }}
+                </span>
+              </div>
+
+              <h3 class="m-0 mt-3 text-lg font-extrabold text-slate-900">{{ reservation.user.name }}</h3>
+              <p class="m-0 mt-1 text-sm text-slate-500">{{ reservation.user.email }}</p>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-3 lg:min-w-[360px]">
+              <div class="rounded-2xl bg-white px-4 py-3 text-center">
+                <p class="m-0 text-xs uppercase tracking-[0.14em] text-slate-400">Total</p>
+                <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">{{ formatPrice(reservation.total) }}</p>
+              </div>
+              <div class="rounded-2xl bg-white px-4 py-3 text-center">
+                <p class="m-0 text-xs uppercase tracking-[0.14em] text-slate-400">Items</p>
+                <p class="m-0 mt-1 text-lg font-extrabold text-slate-900">{{ reservation.totalItems }}</p>
+              </div>
+              <div class="rounded-2xl bg-white px-4 py-3 text-center">
+                <p class="m-0 text-xs uppercase tracking-[0.14em] text-slate-400">Usuario</p>
+                <p class="m-0 mt-1 text-lg font-extrabold text-brand-600">{{ reservation.user.role }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span *ngFor="let item of reservation.items" class="rounded-full bg-white px-3 py-2 text-xs font-semibold text-slate-600">
+              {{ item.quantity }}x {{ item.name }} · {{ formatPrice(item.subtotal) }}
+            </span>
+          </div>
+        </article>
+
+        <mat-paginator
+          [length]="totalResults"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[6, 10, 20]"
+          (page)="onPageChange($event)"
+        ></mat-paginator>
+      </div>
+
+      <ng-template #emptySalesState>
+        <div class="mt-6 rounded-[24px] border border-dashed border-slate-300 bg-slate-50 px-5 py-8 text-center">
+          <mat-icon class="!h-10 !w-10 !text-4xl text-slate-300">receipt_long</mat-icon>
+          <h3 class="m-0 mt-3 text-lg font-extrabold text-slate-900">Todavía no hay ventas</h3>
+          <p class="m-0 mt-2 text-sm leading-6 text-slate-500">Cuando un usuario confirme reservas, van a aparecer acá con toda la información.</p>
+        </div>
+      </ng-template>
+    </section>
+  </div>
+</mat-card>
