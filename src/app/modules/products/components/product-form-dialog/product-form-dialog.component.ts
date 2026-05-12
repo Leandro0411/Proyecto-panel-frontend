@@ -24,14 +24,17 @@ export interface ProductFormDialogResult {
 export class ProductFormDialogComponent {
   readonly isEditMode = this.data.mode === 'edit';
   readonly categories = PRODUCT_CATEGORIES;
+  selectedFiles: File[] = [];
+  imagePreviews: string[] = this.data.product?.imageUrls?.length
+    ? [...this.data.product.imageUrls]
+    : (this.data.product?.imageUrl ? [this.data.product.imageUrl] : []);
 
   readonly form = this.formBuilder.nonNullable.group({
     name: [this.data.product?.name ?? '', [Validators.required, Validators.minLength(3)]],
     description: [this.data.product?.description ?? '', [Validators.required, Validators.minLength(10)]],
     category: [this.data.product?.category ?? 'indumentaria', [Validators.required]],
     price: [this.data.product?.price ?? 0, [Validators.required, Validators.min(0)]],
-    stock: [this.data.product?.stock ?? 0, [Validators.required, Validators.min(0)]],
-    imageUrl: [this.data.product?.imageUrl ?? '', [Validators.pattern(/^https?:\/\/.+/i)]]
+    stock: [this.data.product?.stock ?? 0, [Validators.required, Validators.min(0)]]
   });
 
   constructor(
@@ -48,17 +51,20 @@ export class ProductFormDialogComponent {
     return this.isEditMode ? 'Guardar cambios' : 'Crear producto';
   }
 
-  hasError(controlName: 'name' | 'description' | 'category' | 'price' | 'stock' | 'imageUrl', errorName: string): boolean {
+  hasError(controlName: 'name' | 'description' | 'category' | 'price' | 'stock', errorName: string): boolean {
     const control = this.form.get(controlName);
     return !!control?.touched && !!control.errors?.[errorName];
   }
 
-  get imagePreview(): string {
-    return this.form.controls.imageUrl.value.trim();
-  }
-
   close(): void {
     this.dialogRef.close();
+  }
+
+  onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    this.selectedFiles = files.slice(0, 4);
+    this.imagePreviews = this.selectedFiles.map((file) => URL.createObjectURL(file));
   }
 
   submit(): void {
@@ -74,7 +80,7 @@ export class ProductFormDialogComponent {
       category: rawValue.category as ProductCategory,
       price: Number(rawValue.price),
       stock: Number(rawValue.stock),
-      imageUrl: rawValue.imageUrl.trim()
+      imageFiles: this.selectedFiles
     };
 
     this.dialogRef.close({

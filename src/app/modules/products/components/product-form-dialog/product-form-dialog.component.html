@@ -49,15 +49,24 @@
       </mat-form-field>
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Foto del producto (URL)</mat-label>
-      <input matInput type="url" formControlName="imageUrl" placeholder="https://..." />
-      <mat-icon matSuffix>image</mat-icon>
-      <mat-error *ngIf="hasError('imageUrl', 'pattern')">Ingresá una URL válida que empiece con http:// o https://</mat-error>
-    </mat-form-field>
+    <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-4">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="m-0 text-sm font-extrabold text-slate-900">Fotos del producto</p>
+          <p class="m-0 mt-1 text-xs uppercase tracking-[0.14em] text-slate-400">Hasta 4 imágenes locales</p>
+        </div>
+        <label class="inline-flex cursor-pointer items-center rounded-2xl bg-brand-600 px-4 py-2 text-sm font-bold text-white">
+          <mat-icon class="mr-2">upload</mat-icon>
+          Seleccionar
+          <input type="file" accept="image/*" multiple class="hidden" (change)="onFilesSelected($event)" />
+        </label>
+      </div>
+    </div>
 
-    <div *ngIf="imagePreview" class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
-      <img [src]="imagePreview" alt="Vista previa del producto" class="h-52 w-full object-cover" />
+    <div *ngIf="imagePreviews.length" class="grid gap-3 sm:grid-cols-2">
+      <div *ngFor="let preview of imagePreviews" class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
+        <img [src]="preview" alt="Vista previa del producto" class="h-40 w-full object-cover" />
+      </div>
     </div>
 
     <div class="mt-6 flex justify-end gap-3">

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort, SortDirection } from '@angular/material/sort';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { PRODUCT_CATEGORIES, ProductCategory } from '../../../../core/constants/product.constants';
@@ -44,6 +45,7 @@ export class ProductsListComponent implements OnInit {
     private readonly productsService: ProductsService,
     private readonly authService: AuthService,
     private readonly cartService: CartService,
+    private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar
   ) {
@@ -128,6 +130,10 @@ export class ProductsListComponent implements OnInit {
 
   isInCart(product: Product): boolean {
     return this.getCartQuantity(product) > 0;
+  }
+
+  openProductDetail(product: Product): void {
+    void this.router.navigate(['/products', product.id]);
   }
 
   trackByProductId(_: number, product: Product): string {

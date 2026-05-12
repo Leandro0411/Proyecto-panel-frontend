@@ -14,7 +14,7 @@ export interface CreateProductPayload {
   price: number;
   category: ProductCategory;
   stock: number;
-  imageUrl?: string;
+  imageFiles?: File[];
 }
 
 export interface UpdateProductPayload {
@@ -23,5 +23,10 @@ export interface UpdateProductPayload {
   price?: number;
   category?: ProductCategory;
   stock?: number;
-  imageUrl?: string;
+  imageFiles?: File[];
+}
+
+export interface CreateProductReviewPayload {
+  rating: number;
+  comment: string;
 }

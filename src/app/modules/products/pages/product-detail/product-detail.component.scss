@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.thumb-button {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thumb-button:hover,
+.thumb-button--active {
+  border-color: #165dff;
+  box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.star-button {
+  color: #cbd5e1;
+}
+
+.star-button--active {
+  color: #f59e0b;
+}

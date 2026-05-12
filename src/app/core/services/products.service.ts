@@ -4,7 +4,12 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/api-response.model';
-import { CreateProductPayload, ProductQueryParams, UpdateProductPayload } from '../models/product-admin.model';
+import {
+  CreateProductPayload,
+  CreateProductReviewPayload,
+  ProductQueryParams,
+  UpdateProductPayload,
+} from '../models/product-admin.model';
 import { Product } from '../models/product.model';
 
 @Injectable({
@@ -32,14 +37,49 @@ export class ProductsService {
   }
 
   createProduct(payload: CreateProductPayload): Observable<Product> {
-    return this.http.post<Product>(`${environment.apiUrl}/products`, payload);
+    return this.http.post<Product>(`${environment.apiUrl}/products`, this.toProductFormData(payload));
   }
 
   updateProduct(productId: string, payload: UpdateProductPayload): Observable<Product> {
-    return this.http.patch<Product>(`${environment.apiUrl}/products/${productId}`, payload);
+    return this.http.patch<Product>(`${environment.apiUrl}/products/${productId}`, this.toProductFormData(payload));
   }
 
   deleteProduct(productId: string): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/products/${productId}`);
+  }
+
+  getProduct(productId: string): Observable<Product> {
+    return this.http.get<Product>(`${environment.apiUrl}/products/${productId}`);
+  }
+
+  addReview(productId: string, payload: CreateProductReviewPayload): Observable<Product> {
+    return this.http.post<Product>(`${environment.apiUrl}/products/${productId}/reviews`, payload);
+  }
+
+  private toProductFormData(payload: CreateProductPayload | UpdateProductPayload): FormData {
+    const formData = new FormData();
+
+    if (payload.name !== undefined) {
+      formData.append('name', payload.name);
+    }
+
+    if (payload.description !== undefined) {
+      formData.append('description', payload.description);
+    }
+
+    if (payload.category !== undefined) {
+      formData.append('category', payload.category);
+    }
+
+    if (payload.price !== undefined) {
+      formData.append('price', String(payload.price));
+    }
+
+    if (payload.stock !== undefined) {
+      formData.append('stock', String(payload.stock));
+    }
+
+    payload.imageFiles?.forEach((file) => formData.append('images', file));
+    return formData;
   }
 }

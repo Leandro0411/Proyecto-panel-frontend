@@ -1,0 +1,159 @@
+<mat-card class="app-surface overflow-hidden rounded-[32px] border-0 p-6 sm:p-8">
+  <div *ngIf="isLoading" class="space-y-4">
+    <div class="h-96 animate-pulse rounded-[28px] bg-slate-100"></div>
+    <div class="h-48 animate-pulse rounded-[28px] bg-slate-100"></div>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm font-semibold text-rose-700">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!isLoading && product" class="space-y-8">
+    <div class="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
+      <section>
+        <div class="overflow-hidden rounded-[32px] border border-slate-200 bg-slate-100">
+          <img *ngIf="selectedImage; else detailFallback" [src]="selectedImage" [alt]="product.name" class="aspect-square w-full object-cover" />
+          <ng-template #detailFallback>
+            <div class="grid aspect-square w-full place-items-center bg-[linear-gradient(135deg,#dbeafe_0%,#eff6ff_100%)] text-brand-600">
+              <mat-icon class="!h-16 !w-16 !text-6xl">inventory_2</mat-icon>
+            </div>
+          </ng-template>
+        </div>
+
+        <div *ngIf="galleryImages.length > 1" class="mt-4 grid grid-cols-4 gap-3">
+          <button
+            *ngFor="let image of galleryImages"
+            type="button"
+            class="thumb-button overflow-hidden rounded-[22px] border border-slate-200 bg-white"
+            [class.thumb-button--active]="image === selectedImage"
+            (click)="selectImage(image)"
+          >
+            <img [src]="image" [alt]="product.name" class="aspect-square w-full object-cover" />
+          </button>
+        </div>
+      </section>
+
+      <section class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.24em] text-brand-600">{{ formatCategory(product.category) }}</p>
+        <h1 class="m-0 mt-3 text-4xl font-extrabold text-slate-900">{{ product.name }}</h1>
+
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-1 text-amber-500">
+            <mat-icon *ngFor="let star of [1,2,3,4,5]">
+              {{ star <= product.ratingAverage ? 'star' : 'star_outline' }}
+            </mat-icon>
+          </div>
+          <p class="m-0 text-sm font-semibold text-slate-600">{{ product.ratingAverage || 0 }} de 5 · {{ product.reviewsCount }} reseñas</p>
+        </div>
+
+        <p class="m-0 mt-6 text-base leading-7 text-slate-600">{{ product.description }}</p>
+
+        <div class="mt-6 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-[24px] bg-slate-50 px-4 py-4">
+            <p class="m-0 text-xs uppercase tracking-[0.16em] text-slate-400">Precio</p>
+            <p class="m-0 mt-2 text-2xl font-extrabold text-slate-900">{{ formatPrice(product.price) }}</p>
+          </div>
+          <div class="rounded-[24px] bg-slate-50 px-4 py-4">
+            <p class="m-0 text-xs uppercase tracking-[0.16em] text-slate-400">Stock</p>
+            <p class="m-0 mt-2 text-2xl font-extrabold text-slate-900">{{ product.stock }}</p>
+          </div>
+          <div class="rounded-[24px] bg-slate-50 px-4 py-4">
+            <p class="m-0 text-xs uppercase tracking-[0.16em] text-slate-400">Comentarios</p>
+            <p class="m-0 mt-2 text-2xl font-extrabold text-slate-900">{{ product.reviewsCount }}</p>
+          </div>
+        </div>
+
+        <div *ngIf="!isAdmin" class="mt-6 rounded-[28px] bg-slate-900 p-5 text-white">
+          <p class="m-0 text-xs uppercase tracking-[0.18em] text-slate-300">Reservar producto</p>
+          <p class="m-0 mt-2 text-sm text-slate-300">Agregalo al carrito para incluirlo en tu próxima reserva.</p>
+          <button
+            mat-flat-button
+            type="button"
+            color="primary"
+            class="!mt-4 !h-12 !rounded-2xl !bg-brand-600 !px-5 !text-white"
+            [disabled]="product.stock <= 0"
+            (click)="addToCart()"
+          >
+            <mat-icon>add_shopping_cart</mat-icon>
+            {{ product.stock > 0 ? 'Agregar al carrito' : 'Sin stock disponible' }}
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <section *ngIf="canReview" class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.24em] text-emerald-700">Tu experiencia</p>
+        <h2 class="m-0 mt-3 text-2xl font-extrabold text-slate-900">Dejá tu puntuación</h2>
+        <p class="m-0 mt-2 text-sm leading-6 text-slate-500">Contale a otros usuarios qué te pareció el producto. Si ya comentaste, tu reseña se actualiza.</p>
+
+        <form [formGroup]="reviewForm" class="mt-6 space-y-4" (ngSubmit)="submitReview()">
+          <div>
+            <p class="m-0 text-sm font-bold text-slate-900">Estrellas</p>
+            <div class="mt-2 flex items-center gap-1">
+              <button
+                *ngFor="let star of [1,2,3,4,5]"
+                mat-icon-button
+                type="button"
+                class="star-button"
+                [class.star-button--active]="star <= reviewForm.controls.rating.value"
+                (click)="setRating(star)"
+              >
+                <mat-icon>{{ star <= reviewForm.controls.rating.value ? 'star' : 'star_outline' }}</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Comentario</mat-label>
+            <textarea matInput rows="5" formControlName="comment" placeholder="Escribí tu opinión del producto"></textarea>
+            <mat-error *ngIf="reviewForm.controls.comment.hasError('required')">El comentario es obligatorio.</mat-error>
+            <mat-error *ngIf="reviewForm.controls.comment.hasError('minlength')">Mínimo 3 caracteres.</mat-error>
+          </mat-form-field>
+
+          <button
+            mat-flat-button
+            type="submit"
+            color="primary"
+            class="!h-12 !rounded-2xl !bg-brand-600 !px-5 !text-white"
+            [disabled]="reviewForm.invalid || isSubmittingReview"
+          >
+            <mat-icon>{{ isSubmittingReview ? 'hourglass_top' : 'rate_review' }}</mat-icon>
+            Publicar reseña
+          </button>
+        </form>
+      </section>
+
+      <section class="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
+        <p class="m-0 text-xs font-bold uppercase tracking-[0.24em] text-brand-600">Opiniones</p>
+        <h2 class="m-0 mt-3 text-2xl font-extrabold text-slate-900">Comentarios de la comunidad</h2>
+
+        <div *ngIf="product.reviews.length; else emptyReviewsState" class="mt-6 space-y-4">
+          <article *ngFor="let review of product.reviews" class="rounded-[28px] border border-slate-200 bg-slate-50 p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="m-0 text-lg font-extrabold text-slate-900">{{ review.userName }}</p>
+                <p class="m-0 mt-1 text-xs uppercase tracking-[0.15em] text-slate-400">{{ formatDate(review.createdAt) }}</p>
+              </div>
+              <div class="flex items-center gap-1 text-amber-500">
+                <mat-icon *ngFor="let star of [1,2,3,4,5]">
+                  {{ star <= review.rating ? 'star' : 'star_outline' }}
+                </mat-icon>
+              </div>
+            </div>
+
+            <p class="m-0 mt-4 text-sm leading-7 text-slate-600">{{ review.comment }}</p>
+          </article>
+        </div>
+
+        <ng-template #emptyReviewsState>
+          <div class="mt-6 rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
+            <mat-icon class="!h-10 !w-10 !text-4xl text-slate-300">forum</mat-icon>
+            <h3 class="m-0 mt-3 text-lg font-extrabold text-slate-900">Todavía no hay comentarios</h3>
+            <p class="m-0 mt-2 text-sm leading-6 text-slate-500">Sé la primera persona en dejar una opinión sobre este producto.</p>
+          </div>
+        </ng-template>
+      </section>
+    </div>
+  </div>
+</mat-card>

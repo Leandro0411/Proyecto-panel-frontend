@@ -1,5 +1,14 @@
 import { ProductCategory } from '../constants/product.constants';
 
+export interface ProductReview {
+  user: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -8,6 +17,10 @@ export interface Product {
   category: ProductCategory;
   stock: number;
   imageUrl?: string;
+  imageUrls: string[];
+  ratingAverage: number;
+  reviewsCount: number;
+  reviews: ProductReview[];
   createdAt?: string;
   updatedAt?: string;
 }
